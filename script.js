@@ -94,6 +94,13 @@ const createUsernames = accounts => {
 
 createUsernames(accounts);
 
+const calcDisplayBalance = transactions => {
+  const balance = transactions.reduce((acc, curr) => acc + curr, 0);
+  labelBalance.textContent = `${balance} EUR`;
+};
+
+calcDisplayBalance(account1.transactions);
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
