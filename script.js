@@ -82,6 +82,18 @@ const displayTransactions = transactions => {
 
 displayTransactions(account1.transactions);
 
+const createUsernames = accounts => {
+  accounts.forEach(account => {
+    account.userName = account.owner
+      .toLowerCase()
+      .split(' ')
+      .map(name => name[0])
+      .join('');
+  });
+};
+
+createUsernames(accounts);
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
