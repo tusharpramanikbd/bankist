@@ -61,6 +61,10 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
+// ==========================================
+// Display Functions
+// ==========================================
+
 const displayTransactions = transactions => {
   containerTransactions.innerHTML = '';
 
@@ -72,7 +76,7 @@ const displayTransactions = transactions => {
         <div class="movements__type movements__type--${type}">${
       index + 1
     } ${type}</div>
-        <div class="movements__value">${transaction}</div>
+        <div class="movements__value">${transaction}€</div>
       </div>
     `;
 
@@ -81,6 +85,41 @@ const displayTransactions = transactions => {
 };
 
 displayTransactions(account1.transactions);
+
+const calcDisplayBalance = transactions => {
+  const balance = transactions.reduce((acc, curr) => acc + curr, 0);
+  labelBalance.textContent = `${balance}€`;
+};
+
+calcDisplayBalance(account1.transactions);
+
+const calcDisplaySummary = transactions => {
+  const incomes = transactions
+    .filter(transaction => transaction > 0)
+    .reduce((acc, curr) => acc + curr, 0);
+
+  labelSumIn.textContent = `${incomes}€`;
+
+  const out = transactions
+    .filter(transaction => transaction < 0)
+    .reduce((acc, curr) => acc + curr, 0);
+
+  labelSumOut.textContent = `${Math.abs(out)}€`;
+
+  const interest = transactions
+    .filter(transaction => transaction > 0)
+    .map(deposit => (deposit * 1.2) / 100)
+    .filter(interest => interest >= 1)
+    .reduce((acc, curr) => acc + curr, 0);
+
+  labelSumInterest.textContent = `${interest}€`;
+};
+
+calcDisplaySummary(account1.transactions);
+
+// ==========================================
+// End of Display Functions
+// ==========================================
 
 const createUsernames = accounts => {
   accounts.forEach(account => {
@@ -93,13 +132,6 @@ const createUsernames = accounts => {
 };
 
 createUsernames(accounts);
-
-const calcDisplayBalance = transactions => {
-  const balance = transactions.reduce((acc, curr) => acc + curr, 0);
-  labelBalance.textContent = `${balance} EUR`;
-};
-
-calcDisplayBalance(account1.transactions);
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
