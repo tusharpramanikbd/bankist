@@ -84,38 +84,32 @@ const displayTransactions = transactions => {
   });
 };
 
-displayTransactions(account1.transactions);
-
 const calcDisplayBalance = transactions => {
   const balance = transactions.reduce((acc, curr) => acc + curr, 0);
   labelBalance.textContent = `${balance}€`;
 };
 
-calcDisplayBalance(account1.transactions);
-
-const calcDisplaySummary = transactions => {
-  const incomes = transactions
+const calcDisplaySummary = acc => {
+  const incomes = acc.transactions
     .filter(transaction => transaction > 0)
     .reduce((acc, curr) => acc + curr, 0);
 
   labelSumIn.textContent = `${incomes}€`;
 
-  const out = transactions
+  const out = acc.transactions
     .filter(transaction => transaction < 0)
     .reduce((acc, curr) => acc + curr, 0);
 
   labelSumOut.textContent = `${Math.abs(out)}€`;
 
-  const interest = transactions
+  const interest = acc.transactions
     .filter(transaction => transaction > 0)
-    .map(deposit => (deposit * 1.2) / 100)
+    .map(deposit => (deposit * acc.interestRate) / 100)
     .filter(interest => interest >= 1)
     .reduce((acc, curr) => acc + curr, 0);
 
-  labelSumInterest.textContent = `${interest}€`;
+  labelSumInterest.textContent = `${interest.toFixed(2)}€`;
 };
-
-calcDisplaySummary(account1.transactions);
 
 // ==========================================
 // End of Display Functions
@@ -132,6 +126,52 @@ const createUsernames = accounts => {
 };
 
 createUsernames(accounts);
+
+const handleLoginSuccess = () => {
+  labelWelcome.textContent = `Welcome back, ${
+    currentAccount.owner.split(' ')[0]
+  }`;
+  containerApp.style.opacity = 100;
+
+  inputLoginUsername.value = inputLoginPin.value = '';
+  inputLoginPin.blur();
+
+  displayTransactions(currentAccount.transactions);
+
+  calcDisplayBalance(currentAccount.transactions);
+
+  calcDisplaySummary(currentAccount);
+};
+
+// ==========================================
+// Event Handlers
+// ==========================================
+
+let currentAccount;
+
+btnLogin.addEventListener('click', e => {
+  e.preventDefault();
+
+  currentAccount = accounts.find(
+    acc => acc.userName === inputLoginUsername.value
+  );
+
+  if (!currentAccount) {
+    console.log('Invalid Account');
+    return;
+  }
+
+  if (currentAccount.pin === Number(inputLoginPin.value)) {
+    console.log('Login Success');
+    handleLoginSuccess();
+  } else {
+    console.log('Login Failed');
+  }
+});
+
+// ==========================================
+// End of Event Handlers
+// ==========================================
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
