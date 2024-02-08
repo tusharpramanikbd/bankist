@@ -84,9 +84,9 @@ const displayTransactions = transactions => {
   });
 };
 
-const calcDisplayBalance = transactions => {
-  const balance = transactions.reduce((acc, curr) => acc + curr, 0);
-  labelBalance.textContent = `${balance}€`;
+const calcDisplayBalance = acc => {
+  acc.balance = acc.transactions.reduce((acc, curr) => acc + curr, 0);
+  labelBalance.textContent = `${acc.balance}€`;
 };
 
 const calcDisplaySummary = acc => {
@@ -109,6 +109,14 @@ const calcDisplaySummary = acc => {
     .reduce((acc, curr) => acc + curr, 0);
 
   labelSumInterest.textContent = `${interest.toFixed(2)}€`;
+};
+
+const updateUI = acc => {
+  displayTransactions(acc.transactions);
+
+  calcDisplayBalance(acc);
+
+  calcDisplaySummary(acc);
 };
 
 // ==========================================
@@ -136,11 +144,7 @@ const handleLoginSuccess = () => {
   inputLoginUsername.value = inputLoginPin.value = '';
   inputLoginPin.blur();
 
-  displayTransactions(currentAccount.transactions);
-
-  calcDisplayBalance(currentAccount.transactions);
-
-  calcDisplaySummary(currentAccount);
+  updateUI(currentAccount);
 };
 
 // ==========================================
@@ -167,6 +171,30 @@ btnLogin.addEventListener('click', e => {
   } else {
     console.log('Login Failed');
   }
+});
+
+btnTransfer.addEventListener('click', e => {
+  e.preventDefault();
+
+  const amount = Number(inputTransferAmount.value);
+  const receiverAcc = accounts.find(
+    acc => acc.userName === inputTransferTo.value
+  );
+
+  if (
+    amount > 0 &&
+    receiverAcc &&
+    currentAccount.balance >= amount &&
+    receiverAcc?.userName !== currentAccount.userName
+  ) {
+    console.log('Transfer Valid');
+    currentAccount.transactions.push(-amount);
+    receiverAcc.transactions.push(amount);
+
+    updateUI(currentAccount);
+  }
+
+  inputTransferTo.value = inputTransferAmount.value = '';
 });
 
 // ==========================================
