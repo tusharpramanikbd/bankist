@@ -197,6 +197,25 @@ btnTransfer.addEventListener('click', e => {
   inputTransferTo.value = inputTransferAmount.value = '';
 });
 
+btnClose.addEventListener('click', e => {
+  e.preventDefault();
+
+  if (
+    inputCloseUsername.value === currentAccount.userName &&
+    Number(inputClosePin.value) === currentAccount.pin
+  ) {
+    const index = accounts.findIndex(
+      acc => acc.userName == currentAccount.userName
+    );
+
+    accounts.splice(index, 1);
+
+    containerApp.style.opacity = 0;
+  }
+
+  inputCloseUsername.value = inputClosePin.value = '';
+});
+
 // ==========================================
 // End of Event Handlers
 // ==========================================
